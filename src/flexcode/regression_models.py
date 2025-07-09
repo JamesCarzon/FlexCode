@@ -38,7 +38,7 @@ class NN(FlexCodeRegression):
             raise Exception("NN requires scikit-learn to be installed")
 
         super(NN, self).__init__(max_basis)
-        self.n_jobs = kwargs.get('n_jobs', -1)
+        self.n_jobs = kwargs.get("n_jobs", -1)
 
         # Historically, we have used 'k' to indicate the number of neighbors, so
         # this just puts the right notation for KNeighborsRegressor
@@ -65,7 +65,9 @@ class NN(FlexCodeRegression):
         self.models.fit(x_train, z_basis)
 
     def cv_optim(self, x_train, z_basis):
-        nn_obj = sklearn.multioutput.MultiOutputRegressor(sklearn.neighbors.KNeighborsRegressor(), n_jobs=self.n_jobs)
+        nn_obj = sklearn.multioutput.MultiOutputRegressor(
+            sklearn.neighbors.KNeighborsRegressor(), n_jobs=self.n_jobs
+        )
         clf = sklearn.model_selection.GridSearchCV(
             nn_obj, self.params, cv=5, scoring="neg_mean_squared_error", verbose=2
         )
@@ -87,7 +89,7 @@ class RandomForest(FlexCodeRegression):
             raise Exception("RandomForest requires scikit-learn to be installed")
 
         super(RandomForest, self).__init__(max_basis)
-        self.n_jobs = kwargs.get('n_jobs', -1)
+        self.n_jobs = kwargs.get("n_jobs", -1)
 
         params_opt, opt_flag = params_dict_optim_decision(params, multi_output=True)
         self.params = params_opt
@@ -106,7 +108,9 @@ class RandomForest(FlexCodeRegression):
         self.models.fit(x_train, z_basis, sample_weight=weight)
 
     def cv_optim(self, x_train, z_basis, weight=None):
-        rf_obj = sklearn.multioutput.MultiOutputRegressor(sklearn.ensemble.RandomForestRegressor(), n_jobs=self.n_jobs)
+        rf_obj = sklearn.multioutput.MultiOutputRegressor(
+            sklearn.ensemble.RandomForestRegressor(), n_jobs=self.n_jobs
+        )
         clf = sklearn.model_selection.GridSearchCV(
             rf_obj, self.params, cv=5, scoring="neg_mean_squared_error", verbose=2
         )
@@ -127,7 +131,7 @@ class XGBoost(FlexCodeRegression):
         if not XGBOOST_AVAILABLE:
             raise Exception("XGBoost requires xgboost to be installed")
         super(XGBoost, self).__init__(max_basis)
-        self.n_jobs = kwargs.get('n_jobs', -1)
+        self.n_jobs = kwargs.get("n_jobs", -1)
 
         # Historically, people have used `eta` for `learning_rate` - taking that
         # into account
@@ -163,7 +167,9 @@ class XGBoost(FlexCodeRegression):
         clf.fit(x_train, z_basis, sample_weight=weight)
 
         self.params = params_name_format(clf.best_params_, str_rem="estimator__")
-        self.models = sklearn.multioutput.MultiOutputRegressor(xgb.XGBRegressor(**self.params), n_jobs=self.n_jobs)
+        self.models = sklearn.multioutput.MultiOutputRegressor(
+            xgb.XGBRegressor(**self.params), n_jobs=self.n_jobs
+        )
 
     def predict(self, x_test):
         coefs = self.models.predict(x_test)
@@ -175,7 +181,7 @@ class Lasso(FlexCodeRegression):
         if not SKLEARN_AVAILABLE:
             raise Exception("Lasso requires scikit-learn to be installed")
         super(Lasso, self).__init__(max_basis)
-        self.n_jobs = kwargs.get('n_jobs', -1)
+        self.n_jobs = kwargs.get("n_jobs", -1)
 
         # Also, set the default values if not passed
         params["alpha"] = params.get("alpha", 1.0)
@@ -203,7 +209,9 @@ class Lasso(FlexCodeRegression):
         self.models.fit(x_train, z_basis)
 
     def cv_optim(self, x_train, z_basis):
-        lasso_obj = sklearn.multioutput.MultiOutputRegressor(sklearn.linear_model.ElasticNet(), n_jobs=self.n_jobs)
+        lasso_obj = sklearn.multioutput.MultiOutputRegressor(
+            sklearn.linear_model.ElasticNet(), n_jobs=self.n_jobs
+        )
         clf = sklearn.model_selection.GridSearchCV(
             lasso_obj, self.params, cv=5, scoring="neg_mean_squared_error", verbose=2
         )
@@ -224,7 +232,7 @@ class CustomModel(FlexCodeRegression):
         if not SKLEARN_AVAILABLE:
             raise Exception("Custom class requires scikit-learn to be installed")
         super(CustomModel, self).__init__(max_basis)
-        self.n_jobs = kwargs.get('n_jobs', -1)
+        self.n_jobs = kwargs.get("n_jobs", -1)
 
         params_opt, opt_flag = params_dict_optim_decision(params, multi_output=True)
         self.params = params_opt
@@ -254,7 +262,9 @@ class CustomModel(FlexCodeRegression):
         clf.fit(x_train, z_basis)
 
         self.params = params_name_format(clf.best_params_, str_rem="estimator__")
-        self.models = sklearn.multioutput.MultiOutputRegressor(self.base_model(**self.params), n_jobs=self.n_jobs)
+        self.models = sklearn.multioutput.MultiOutputRegressor(
+            self.base_model(**self.params), n_jobs=self.n_jobs
+        )
 
     def predict(self, x_test):
         coefs = self.models.predict(x_test)
