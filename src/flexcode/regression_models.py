@@ -51,7 +51,7 @@ class NN(FlexCodeRegression):
             None
             if opt_flag
             else sklearn.multioutput.MultiOutputRegressor(
-                sklearn.neighbors.KNeighborsRegressor(**self.params), n_jobs=self.n_jobs)
+                sklearn.neighbors.KNeighborsRegressor(**self.params), n_jobs=self.n_jobs
             )
         )
 
