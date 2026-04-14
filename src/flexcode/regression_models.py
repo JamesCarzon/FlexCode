@@ -142,7 +142,7 @@ class XGBoost(FlexCodeRegression):
         # Also, set the default values if not passed
         params["max_depth"] = params.get("max_depth", 6)
         params["learning_rate"] = params.get("learning_rate", 0.3)
-        params["silent"] = params.get("silent", 1)
+        params["verbosity"] = params.get("silent", 1)
         params["objective"] = params.get("objective", "reg:linear")
 
         params_opt, opt_flag = params_dict_optim_decision(params, multi_output=True)
