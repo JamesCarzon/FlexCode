@@ -67,9 +67,9 @@ def test_coef_predict_same_as_predict_rf():
 
 
 def test_coef_predict_same_as_predict_xgb():
-    x_train, z_train = generate_data(1000)
-    x_validation, z_validation = generate_data(1000)
-    x_test, _ = generate_data(1000)
+    x_train, z_train = generate_data(5000)
+    x_validation, z_validation = generate_data(5000)
+    x_test, _ = generate_data(5000)
 
     # Parameterize model
     model = flexcode.FlexCodeModel(
