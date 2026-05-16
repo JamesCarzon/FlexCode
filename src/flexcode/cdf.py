@@ -47,3 +47,14 @@ class FlexCodeCDF:
         cdfs = np.clip(cdfs, 0.0, 1.0)
 
         return np.array([np.interp(z_query[i], z_flat, cdfs[i]) for i in range(len(z_query))])
+
+    def predict_proba(self, X, n_grid=1000):
+        """Return CDF values as a two-column array following the sklearn predict_proba convention.
+
+        :param X: numpy array of shape (N, 1 + d); column 0 is the z query values,
+            columns 1: are covariates x.
+        :param n_grid: int, number of grid points used internally for the PDF.
+        :returns: numpy array of shape (N, 2): col 0 = 1 - CDF, col 1 = CDF.
+        """
+        cdf_vals = self.predict(X, n_grid=n_grid)
+        return np.column_stack([1.0 - cdf_vals, cdf_vals])
